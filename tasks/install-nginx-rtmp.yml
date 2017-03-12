@@ -1,0 +1,41 @@
+---
+- name: update apt cache
+  apt: update_cache=yes cache_valid_time=3600
+
+- name: get the version of the installed nginw package (if any)
+  command: dpkg-query -W -f='${Version}' nginx-extras
+  register: nginx_version
+  failed_when: False
+  changed_when: False
+
+- name: install the regular nginx package to satisfy dependencies if required
+  apt:
+    name: nginx-extras
+    state: installed
+  when: nginx_version|failed
+
+- name: remove the existing nginx package to avoid conflicts
+  apt:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    - nginx_extras
+    - nginx-common
+  when: nginx_version|failed or nginx_version.stdout != "{{ nginx_rtmp_version }}"
+
+- name: copy the custom nginx packages to the remote machine
+  copy:
+    src: packages/{{ item }}
+    dest: /tmp/{{ item }}
+  with_items:
+    - nginx-common_{{ nginx_rtmp_version }}_all.deb
+    - nginx-extras_{{ nginx_rtmp_version }}_amd64.deb
+  when: nginx_version|failed or nginx_version.stdout != "{{ nginx_rtmp_version }}"
+
+- name: install the custom nginx packages
+  apt:
+    deb: /tmp/{{ item }}
+  with_items:
+    - nginx-common_{{ nginx_rtmp_version }}_all.deb
+    - nginx-extras_{{ nginx_rtmp_version }}_amd64.deb
+  when: nginx_version|failed or nginx_version.stdout != "{{ nginx_rtmp_version }}"
