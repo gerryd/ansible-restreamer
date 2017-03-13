@@ -1,0 +1,63 @@
+---
+- name: update apt cache
+  apt: update_cache=yes cache_valid_time=3600
+
+- name: add the Debian backports repository
+  apt_repository:
+    repo: deb http://deb.debian.org/debian jessie-backports main contrib non-free
+    state: present
+
+- name: install ffmpeg
+  apt:
+    name: ffmpeg
+    state: latest
+
+- name: install ffmpeg script
+  copy:
+    src: ffmpeg/ffmpeg.sh
+    dest: /opt/ffmpeg.sh
+    owner: root
+    group: root
+    mode: 0755
+  register: ffmpeg_script
+
+- name: install ffmpeg config
+  template:
+    src: ffmpeg/ffmpeg-config.sh
+    dest: /opt/ffmpeg-config.sh
+    owner: root
+    group: root
+    mode: 0644
+  register: ffmpeg_config
+
+- name: install ffmpeg service
+  copy:
+    src: ffmpeg/ffmpeg.service
+    dest: /etc/systemd/system/ffmpeg.service
+    owner: root
+    group: root
+    mode: 0644
+  register: ffmpeg_service
+
+- name: execute daemon-reload
+  shell: systemctl daemon-reload
+  when: ffmpeg_service.changed
+
+- name: enable ffmpeg service
+  systemd:
+    name: ffmpeg
+    enabled: yes
+    state: started
+    daemon_reload: yes
+
+- name: enable ffmpeg service
+  service:
+    name: ffmpeg
+    enabled: yes
+    state: started
+
+- name: restart ffmpeg if needed
+  service:
+    name: ffmpeg
+    state: restarted
+  when: ffmpeg_script.changed or ffmpeg_config.changed

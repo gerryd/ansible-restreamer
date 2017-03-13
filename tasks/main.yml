@@ -1,2 +1,4 @@
 ---
 - include: "install-nginx-rtmp.yml"
+
+- include: "install-ffmpeg.yml"

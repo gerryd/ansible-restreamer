@@ -1,0 +1,12 @@
+[Unit]
+Description=ffmpeg service
+
+[Service]
+ExecStart=/opt/ffmpeg.sh
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=control-group
+KillSignal=SIGKILL
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
