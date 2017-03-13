@@ -1,6 +1,8 @@
 ---
 - name: update apt cache
-  apt: update_cache=yes cache_valid_time=3600
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
 
 - name: get the version of the installed nginw package (if any)
   command: dpkg-query -W -f='${Version}' nginx-extras
@@ -39,3 +41,11 @@
     - nginx-common_{{ nginx_rtmp_version }}_all.deb
     - nginx-extras_{{ nginx_rtmp_version }}_amd64.deb
   when: nginx_version|failed or nginx_version.stdout != "{{ nginx_rtmp_version }}"
+
+- name: hold the custom nginx packages
+  dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  with_items:
+    - nginx-common
+    - nginx-extras
