@@ -60,4 +60,4 @@
   service:
     name: ffmpeg
     state: restarted
-  when: ffmpeg_script.changed or ffmpeg_config.changed
+  when: ffmpeg_script.changed or ffmpeg_config.changed or ffmpeg_service.changed
