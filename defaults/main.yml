@@ -2,6 +2,6 @@
 nginx_rtmp_version: "1.6.2-5+deb8u4-rtmp1"
 
 restreamer_source: "http://127.0.0.1:1234/stream.m3u8"
-restreamer_destination: "udp://127.0.0.1:9000"
+restreamer_destination: "rtmp://127.0.0.1:1935/stream/channel"
 restreamer_recording_directory: /tmp/
 restreamer_recording_segment_length: 600
