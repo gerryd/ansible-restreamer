@@ -94,3 +94,18 @@
     line: "include /etc/nginx/nginx-rtmp.conf;"
     state: present
   notify: reload nginx
+
+- name: install the python-passlib library, as required by the htpasswd module
+  apt:
+    name: python-passlib
+    state: installed
+
+- name: create htpasswd file
+  htpasswd:
+    path: /etc/nginx/htpasswd
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+    owner: root
+    group: www-data
+    mode: 0640
+  with_items: "{{ restreamer_users }}"
