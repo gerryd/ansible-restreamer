@@ -14,7 +14,7 @@
   apt:
     name: nginx-extras
     state: installed
-  when: nginx_version|failed
+  when: nginx_version.failed
 
 - name: remove the existing nginx package to avoid conflicts
   apt:
@@ -23,7 +23,7 @@
   with_items:
     - nginx_extras
     - nginx-common
-  when: nginx_version|failed or nginx_version.stdout != "{{ nginx_rtmp_version }}"
+  when: nginx_version.failed or nginx_version.stdout != "{{ nginx_rtmp_version }}"
 
 - name: copy the custom nginx packages to the remote machine
   copy:
@@ -32,7 +32,7 @@
   with_items:
     - nginx-common_{{ nginx_rtmp_version }}_all.deb
     - nginx-extras_{{ nginx_rtmp_version }}_amd64.deb
-  when: nginx_version|failed or nginx_version.stdout != "{{ nginx_rtmp_version }}"
+  when: nginx_version.failed or nginx_version.stdout != "{{ nginx_rtmp_version }}"
 
 - name: install the custom nginx packages
   apt:
@@ -40,7 +40,7 @@
   with_items:
     - nginx-common_{{ nginx_rtmp_version }}_all.deb
     - nginx-extras_{{ nginx_rtmp_version }}_amd64.deb
-  when: nginx_version|failed or nginx_version.stdout != "{{ nginx_rtmp_version }}"
+  when: nginx_version.failed or nginx_version.stdout != "{{ nginx_rtmp_version }}"
 
 - name: hold the custom nginx packages
   dpkg_selections:
