@@ -95,6 +95,14 @@
     state: present
   notify: reload nginx
 
+# https://github.com/arut/nginx-rtmp-module/issues/683
+- name: patch nginx.conf to decrease the workers to 1
+  lineinfile:
+    dest: /etc/nginx/nginx.conf
+    regexp: "^worker_processes\ "
+    line: "worker_processes 1;"
+  notify: reload nginx
+
 - name: install the python-passlib library, as required by the htpasswd module
   apt:
     name: python-passlib
