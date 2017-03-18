@@ -1,0 +1,9 @@
+---
+- name: install the site configuration
+  template:
+    src: nginx/site.conf
+    dest: /etc/nginx/sites-enabled/site.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload nginx

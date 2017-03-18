@@ -1,4 +1,3 @@
 ---
-- include: "install-nginx-rtmp.yml"
-
+- include: "configure-nginx-rtmp.yml"
 - include: "install-ffmpeg.yml"
